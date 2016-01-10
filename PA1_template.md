@@ -1,7 +1,14 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "**Reproducible Research: Peer Assessment 1**"
+subtitle: "**Task: Analysis of Activity Monitoring Data**"
+output: html_document
+author: "author: Dmytro Dudenko"
+keep_md: yes
+---
 
 
-## Loading and preprocessing the data
+
+### 1. Loading libraries we are going to use and preprocessing the data
 
 
 ```r
@@ -14,33 +21,21 @@ getwd()
 setwd("~/JHU-courses/Course-5-W2/RepData_PeerAssessment1")
 
 unzip(zipfile="./activity.zip",exdir="./")
-
 activity <- read.table(file="./activity.csv", header = TRUE, sep=",")
 ```
 
-## What is mean total number of steps taken per day?
+### 2. What is mean total number of steps taken per day?
+
+
+Calculating the total number of steps taken per day
+
 
 ```r
 activity_clean <- group_by(activity, date)
-
 activity_clean <- filter(activity_clean, !is.na(steps))
-
 total_per_day <- summarize(activity_clean, total_steps = sum(steps))
-
-mean(total_per_day$total_steps)
 ```
-
-```
-## [1] 10766.19
-```
-
-```r
-median(total_per_day$total_steps)
-```
-
-```
-## [1] 10765
-```
+Plotting a histogram of the total number of steps taken each day
 
 ```r
 how_many_days <- length(total_per_day$total_steps)
@@ -48,8 +43,20 @@ how_many_days <- length(total_per_day$total_steps)
 hist(total_per_day$total_steps, xlab="steps per day", ylab="Frequency", breaks = how_many_days, col="blue", main="Histogram of the total number of steps taken each day")
 ```
 
-![](PA1_template_files/figure-html/lineplot1-1.png) 
-## What is the average daily activity pattern?
+![plot of chunk lineplot1_1](figure/lineplot1_1-1.png) 
+Reporting mean and median values, respectively
+
+```r
+c(mean(total_per_day$total_steps),median(total_per_day$total_steps))
+```
+
+```
+## [1] 10766.19 10765.00
+```
+
+### 3. What is the average daily activity pattern?
+
+Plotting a time series plot
 
 ```r
 activity_clean2 <- group_by(activity, interval)
@@ -60,7 +67,9 @@ plot(avg_steps$interval, avg_steps$avg, type="l",
      xlab = "5-min Step Interval", ylab = "Average Number of Steps", main = "The Average Daily Activity Pattern",  col ="blue")
 ```
 
-![](PA1_template_files/figure-html/lineplot2-1.png) 
+![plot of chunk lineplot2_0](figure/lineplot2_0-1.png) 
+Finding out which 5-minute interval, on average across all the days in the dataset, contains the maximum number. Also plotting its value to make sure it is the one
+of steps
 
 ```r
 avg_steps[which(avg_steps$avg==max(avg_steps$avg)),]
@@ -73,26 +82,34 @@ avg_steps[which(avg_steps$avg==max(avg_steps$avg)),]
 ##      (int)    (dbl)
 ## 1      835 206.1698
 ```
+### 4. Imputing missing values
+
+ Calculate and report the total number of missing values in the dataset
+ (the total number of rows with NAs)
 
 ```r
-## Imputing missing values
-
-# Calculate and report the total number of missing values in the dataset
-# (the total number of rows with NAs)
-
 print(nrow(activity)-nrow(activity_clean2))
 ```
 
 ```
 ## [1] 2304
 ```
-#Not giving any extra steps to the statistics.
+
+I decided to not givie any extra steps to the statistics.
+Therefore, all missing values are 0 :)
 
 
 ```r
 activity_clean3 <- activity
 activity_clean3$steps[is.na(activity$steps)] = 0
+```
 
+Now I will prepare two histograms: with and without accounting for Na values.
+Apparently, no difference. Although, the mean and medians values are dropping due to larger amount of dataset points.
+Some days contain only Na values. So, large stick at 0 steps position.
+
+
+```r
 activity_clean3 <- group_by(activity_clean3, date)
 
 total_per_day3 <- summarize(activity_clean3, total_steps = sum(steps))
@@ -100,36 +117,40 @@ total_per_day3 <- summarize(activity_clean3, total_steps = sum(steps))
 hist(total_per_day$total_steps, ylim=c(0,10.0), xlab="steps per day", ylab="Frequency", breaks = how_many_days, col="blue", main="Histogram of the total number of steps taken each day")
 ```
 
-![](PA1_template_files/figure-html/lineplot3-1.png) 
+![plot of chunk lineplot3_3_4](figure/lineplot3_3_4-1.png) 
 
 ```r
 hist(total_per_day3$total_steps, ylim=c(0,10.0), xlab="steps per day", ylab="Frequency", breaks = how_many_days, col="blue", main="Histogram of the total number of steps taken each day")
 ```
 
-![](PA1_template_files/figure-html/lineplot3-2.png) 
+![plot of chunk lineplot3_3_4](figure/lineplot3_3_4-2.png) 
 
 ```r
-mean(total_per_day3$total_steps)
+c(mean(total_per_day3$total_steps),median(total_per_day3$total_steps))
 ```
 
 ```
-## [1] 9354.23
+## [1]  9354.23 10395.00
 ```
+
+
+###5. Are there differences in activity patterns between weekdays and weekends?
+
+Unfortunately, my Ubuntu system call doesn't have sufficient priviledges
+So, I don't know how to put english locale for this particular session without changing global system settings
+
 
 ```r
-median(total_per_day3$total_steps)
+Sys.setenv(LANG = "en_US.UTF-8")
+Sys.setlocale("LC_TIME", "English")
 ```
 
 ```
-## [1] 10395
+## Warning in Sys.setlocale("LC_TIME", "English"): OS meldet: Anfrage
+## Lokilisierung auf "English" zu setzen kann nicht beachtet werden
 ```
 
-
-## Are there differences in activity patterns between weekdays and weekends?
-
-#This system call doesn't have sufficient priviledges
-#Sys.setenv(LANG = "en_US.UTF-8")
-#Sys.setlocale("LC_TIME", "English")
+Anyway, we shall proceed with the german Samstag and Sonntag as weekend days
 
 
 ```r
@@ -147,4 +168,4 @@ avg_week <- rbind(avg_wday, avg_wend)
 xyplot(avg ~  interval | DTYPE, data = avg_week, layout = c(1,2), type ="l", ylab="Number of Steps")
 ```
 
-![](PA1_template_files/figure-html/lineplot4-1.png) 
+![plot of chunk lineplot4](figure/lineplot4-1.png) 
