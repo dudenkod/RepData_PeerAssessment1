@@ -42,7 +42,7 @@ hist(total_per_day$total_steps, xlab="steps per day", ylab="Frequency", breaks =
 ```
 
 ![plot of chunk lineplot1_1](figure/lineplot1_1-1.png) 
-Reporting mean and median values, respectively
+Reporting mean and median values, respectively, as required
 
 ```r
 c(mean(total_per_day$total_steps),median(total_per_day$total_steps))
@@ -83,7 +83,7 @@ avg_steps[which(avg_steps$avg==max(avg_steps$avg)),]
 ### 4. Imputing missing values
 
  Calculate and report the total number of missing values in the dataset
- (the total number of rows with NAs)
+ (the total number of rows with NAs). How many of them are Na?
 
 ```r
 print(nrow(activity)-nrow(activity_clean2))
@@ -94,17 +94,19 @@ print(nrow(activity)-nrow(activity_clean2))
 ```
 
 I decided to not givie any extra steps to the statistics.
-Therefore, all missing values are 0 :)
+It is important for people who count their steps to accumulate realistic
+amount of steps.
+Therefore, all missing values Nas as equal to 0 :)
 
 
 ```r
 activity_clean3 <- activity
-activity_clean3$steps[is.na(activity$steps)] = 0
+activity_clean3$steps[is.na(activity$steps)] <- 0
 ```
 
 Now I will prepare two histograms: with and without accounting for Na values.
 Apparently, no difference. Although, the mean and medians values are dropping due to larger amount of dataset points.
-Some days contain only Na values. So, large stick at 0 steps position.
+Some days contain only Na values. So, the largest stick is at 0 steps position.
 
 
 ```r
