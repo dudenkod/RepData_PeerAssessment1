@@ -1,12 +1,10 @@
----
-title: "**Reproducible Research: Peer Assessment 1**"
-subtitle: "**Task: Analysis of Activity Monitoring Data**"
-output: html_document
-author: "author: Dmytro Dudenko"
-keep_md: yes
----
 
 
+
+
+# "**JHU Course on Reproducible Research**"
+## **Project: Analysis of Activity Monitoring Data**
+### author: Dmytro Dudenko
 
 ### 1. Loading libraries we are going to use and preprocessing the data
 
