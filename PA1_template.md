@@ -4,7 +4,7 @@
 
 # "**JHU Course on Reproducible Research**"
 ## **Project: Analysis of Activity Monitoring Data**
-### author: Dmytro Dudenko
+#### author: Dmytro Dudenko
 
 ### 1. Loading libraries we are going to use and preprocessing the data
 
